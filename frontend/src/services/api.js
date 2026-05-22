@@ -103,6 +103,38 @@ function crud(base) {
   };
 }
 
+// Apply pass 7 — additional CRUD entities
+export const diveLogsApi             = crud('dive-logs');
+export const citizenSubmissionsApi   = crud('citizen-submissions');
+
+// Apply pass 7 — extra non-CRUD helpers
+export const moderateCitizenSubmission = (id, body) =>
+  request(`/citizen-submissions/${id}/moderate`, { method: 'POST', body: JSON.stringify(body || {}) });
+export const getCitizenQueue       = () => request('/citizen-submissions/queue');
+export const getCitizenLeaderboard = () => request('/citizen-submissions/leaderboard');
+
+// Public (no auth) — citizen-science submission
+export const submitCitizenPublic = async (body) => {
+  const res = await fetch(`${API_BASE}/public/citizen-submissions`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body || {}),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || `Submit failed (${res.status})`);
+  return data;
+};
+
+// Fragment lineage
+export const getFragmentLineage = (fragId) => request(`/fragment-lineage/${encodeURIComponent(fragId)}`);
+export const getGenotypeCohort  = (genotypeId) => request(`/fragment-lineage/genotype/${encodeURIComponent(genotypeId)}`);
+
+// NOAA Coral Reef Watch ingest (NEEDS-CREDS — 503 unless NOAA_CRW_ENABLED=true)
+export const getNoaaCrwStatus  = () => request('/noaa-crw/status');
+export const getNoaaCrwIngests = () => request('/noaa-crw/ingests');
+export const triggerNoaaCrw    = (body) => request('/noaa-crw/trigger', { method: 'POST', body: JSON.stringify(body || {}) });
+export const reefHeatStressPlan = (body) => request('/reef-heat-stress-plan/score', { method: 'POST', body: JSON.stringify(body || {}) });
+
 // 18 CRUD entities
 export const reefSitesApi         = crud('reef-sites');
 export const nurseriesApi         = crud('nurseries');
@@ -148,6 +180,11 @@ export const aiSpeciesIdFish        = (b) => request('/ai/species-id-fish',     
 export const aiPublicationSummary   = (b) => request('/ai/publication-summary',       { method: 'POST', body: JSON.stringify(b || {}) });
 export const aiTrainingGap          = (b) => request('/ai/training-gap-analysis',     { method: 'POST', body: JSON.stringify(b || {}) });
 export const aiDonorNarrative       = (b) => request('/ai/donor-narrative',           { method: 'POST', body: JSON.stringify(b || {}) });
+
+// Apply pass 7 — additional AI verbs
+export const aiSpeciesMixRecommend  = (b) => request('/ai/species-mix-recommend',     { method: 'POST', body: JSON.stringify(b || {}) });
+export const aiGrowthRateModel      = (b) => request('/ai/growth-rate-model',         { method: 'POST', body: JSON.stringify(b || {}) });
+export const aiGenotypeRescueMatch  = (b) => request('/ai/genotype-rescue-match',     { method: 'POST', body: JSON.stringify(b || {}) });
 
 // AI history
 export const getAIHistory = (feature, limit = 25) => {

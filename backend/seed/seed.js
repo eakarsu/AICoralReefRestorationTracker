@@ -46,6 +46,13 @@ async function run() {
     console.log('[seed] applying migrations...');
     const schema = fs.readFileSync(path.join(__dirname, '..', 'migrations', '001_schema.sql'), 'utf8');
     await client.query(schema);
+    // Apply pass 7 — additive migration (safe to re-run; CREATE/ALTER use IF NOT EXISTS)
+    try {
+      const pass7 = fs.readFileSync(path.join(__dirname, '..', 'migrations', '002_pass7_full_backlog.sql'), 'utf8');
+      await client.query(pass7);
+    } catch (e) {
+      console.warn('[seed] 002_pass7_full_backlog migration warning:', e.message);
+    }
 
     console.log('[seed] inserting reef_sites...');
     const sites = [

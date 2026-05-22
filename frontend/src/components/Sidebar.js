@@ -12,6 +12,7 @@ const GROUPS = [
       { to: '/reef-sites',         label: 'Reef Sites' },
       { to: '/nurseries',          label: 'Nurseries' },
       { to: '/fragments',          label: 'Fragments' },
+      { to: '/fragment-lineage',   label: 'Fragment Lineage' },
       { to: '/propagation-runs',   label: 'Propagation Runs' },
     ],
   },
@@ -35,6 +36,7 @@ const GROUPS = [
     label: 'Divers & Vessels',
     links: [
       { to: '/divers',             label: 'Divers' },
+      { to: '/dive-logs',          label: 'Dive Logs' },
       { to: '/equipment',          label: 'Equipment' },
       { to: '/vessels',            label: 'Vessels' },
       { to: '/training-sessions',  label: 'Training Sessions' },
@@ -72,6 +74,9 @@ const GROUPS = [
       { to: '/ai/species-id-fish',          label: 'AI · Species ID' },
       { to: '/ai/diver-safety-brief',       label: 'AI · Diver Safety' },
       { to: '/ai/propagation-success-rate', label: 'AI · Propagation Success' },
+      { to: '/ai/species-mix-recommend',    label: 'AI · Species Mix Recommend' },
+      { to: '/ai/growth-rate-model',        label: 'AI · Growth Rate Model' },
+      { to: '/ai/genotype-rescue-match',    label: 'AI · Genotype Rescue Match' },
     ],
   },
   {
@@ -86,9 +91,17 @@ const GROUPS = [
     ],
   },
   {
+    label: 'Citizen Science',
+    links: [
+      { to: '/citizen-portal',      label: 'Submit Observation' },
+      { to: '/citizen-submissions', label: 'Moderation Queue' },
+    ],
+  },
+  {
     label: 'Admin',
     links: [
       { to: '/webhooks', label: 'Webhooks' },
+      { to: '/noaa-crw', label: 'NOAA Coral Reef Watch' },
     ],
   },
   {

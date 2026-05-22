@@ -131,6 +131,27 @@ const SAMPLES = {
     { label: 'Confident (corporate funder)',     values: { tone: 'confident',   audience: 'corporate' } },
     { label: 'Heartfelt (community)',            values: { tone: 'heartfelt',   audience: 'community' } },
   ],
+  'species-mix-recommend': [
+    { label: 'Looe Key — biodiversity push',     values: { site_id: 'SITE-001', target_diversity: 'high',   max_species: 5, notes: 'Bias toward thermally resilient Acropora genotypes.' } },
+    { label: "Glover's Atoll — functional",      values: { site_id: 'SITE-004', target_diversity: 'medium', max_species: 4, notes: 'Functional ecological coverage prioritised.' } },
+    { label: 'Heron Island — bleaching recovery',values: { site_id: 'SITE-009', target_diversity: 'high',   max_species: 6, notes: 'Post-bleaching recovery cohort.' } },
+    { label: 'Raja Ampat Wayag',                 values: { site_id: 'SITE-015', target_diversity: 'high',   max_species: 5, notes: 'Active bleaching ongoing; thermal tolerance > 30C required.' } },
+    { label: 'Default — single species 100%',    values: { site_id: '',         target_diversity: 'low',    max_species: 1, notes: 'Single-species Acropora cervicornis pilot.' } },
+  ],
+  'growth-rate-model': [
+    { label: 'FRG-0001 — 12 month horizon',      values: { frag_id: 'FRG-0001', horizon_months: 12, notes: '' } },
+    { label: 'FRG-0009 — disease watch',         values: { frag_id: 'FRG-0009', horizon_months: 6,  notes: 'Active white-band lesion treatment.' } },
+    { label: 'FRG-0050 — 24 month long-range',   values: { frag_id: 'FRG-0050', horizon_months: 24, notes: '' } },
+    { label: 'FRG-0100 — Pocillopora',           values: { frag_id: 'FRG-0100', horizon_months: 12, notes: 'Branching morphology, depth 8m.' } },
+    { label: 'FRG-0200 — slow grower',           values: { frag_id: 'FRG-0200', horizon_months: 18, notes: 'Massive Porites; expected < 1 cm/yr.' } },
+  ],
+  'genotype-rescue-match': [
+    { label: 'Florida to Caribbean rescue',      values: { donor_filter: 'SITE-001,SITE-002', recipient_filter: 'SITE-003,SITE-005', notes: 'Match heat-tolerant Florida donors to Caribbean recipients.' } },
+    { label: 'Indo-Pacific cross-basin',         values: { donor_filter: 'SITE-008,SITE-010', recipient_filter: 'SITE-015',          notes: 'Cross-basin assisted gene flow.' } },
+    { label: 'WIO regional recovery',            values: { donor_filter: 'SITE-013',          recipient_filter: 'SITE-014',          notes: 'Western Indian Ocean recovery cohort.' } },
+    { label: 'Universal donor scan',             values: { donor_filter: '',                  recipient_filter: '',                  notes: 'No filter; AI ranks across all sites.' } },
+    { label: 'Bleaching-stressed recipients',    values: { donor_filter: 'SITE-001',          recipient_filter: 'SITE-008,SITE-009', notes: 'Active bleaching recipient sites only.' } },
+  ],
 };
 
 // GET /api/ai/samples?feature=<verb>
@@ -427,6 +448,102 @@ router.post('/donor-narrative', async (req, res) => {
     const metrics = { outplants: o.rows[0], bleaching: b.rows[0], partners: p.rows[0], audience: audience || 'donors' };
     const result = await ai.donorNarrative(metrics, tone || 'inspiring');
     await record('donor-narrative', { tone, audience }, result);
+    res.json(result);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ============================================================
+// Apply pass 7 — full backlog
+// ============================================================
+
+// 17. species-mix-recommend { site_id?, target_diversity?, max_species?, notes? }
+router.post('/species-mix-recommend', async (req, res) => {
+  try {
+    const { site_id, target_diversity, max_species, notes } = req.body || {};
+    let site = null;
+    let bleaching = [];
+    let wq = [];
+    if (site_id) {
+      const s = await pool.query('SELECT * FROM reef_sites WHERE site_id = $1 LIMIT 1', [site_id]);
+      site = s.rows[0] || null;
+      const b = await pool.query('SELECT * FROM bleaching_events WHERE site_id = $1 ORDER BY started_at DESC LIMIT 5', [site_id]);
+      bleaching = b.rows;
+      const w = await pool.query('SELECT * FROM water_quality WHERE site_id = $1 ORDER BY ts DESC LIMIT 10', [site_id]);
+      wq = w.rows;
+    }
+    // Pull genotype pool from fragments (use provenance columns when present)
+    const frags = await pool.query('SELECT * FROM fragments ORDER BY id ASC LIMIT 40');
+    const result = await ai.speciesMixRecommend(
+      { site_id: site_id || 'ANY', site, recent_bleaching: bleaching, recent_water_quality: wq },
+      frags.rows,
+      {
+        target_diversity: target_diversity || 'medium',
+        max_species: Number(max_species) || 4,
+        notes: notes || '',
+      }
+    );
+    await record('species-mix-recommend', { site_id, target_diversity, max_species, notes }, result);
+    res.json(result);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// 18. growth-rate-model { frag_id, horizon_months?, notes? }
+router.post('/growth-rate-model', async (req, res) => {
+  try {
+    const { frag_id, horizon_months, notes } = req.body || {};
+    if (!frag_id) return res.status(400).json({ error: 'frag_id is required' });
+    const f = await pool.query('SELECT * FROM fragments WHERE frag_id = $1 LIMIT 1', [frag_id]);
+    if (!f.rows.length) return res.status(404).json({ error: `fragment not found: ${frag_id}` });
+    // Look up any monitoring visits + outplant history tied to this fragment as a time series proxy.
+    const m = await pool.query(
+      `SELECT mv.* FROM monitoring_visits mv
+       LEFT JOIN outplants o ON o.site_id = mv.site_id
+       WHERE o.frag_id = $1
+       ORDER BY mv.visit_at DESC LIMIT 25`,
+      [frag_id]
+    );
+    const o = await pool.query('SELECT * FROM outplants WHERE frag_id = $1 ORDER BY planted_at ASC', [frag_id]);
+    const result = await ai.growthRateModel(
+      { fragment: f.rows[0], outplants: o.rows, monitoring_visits: m.rows, notes: notes || '' },
+      Number(horizon_months) || 12
+    );
+    await record('growth-rate-model', { frag_id, horizon_months, notes }, result);
+    res.json(result);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// 19. genotype-rescue-match { donor_filter?, recipient_filter?, notes? }
+router.post('/genotype-rescue-match', async (req, res) => {
+  try {
+    const { donor_filter, recipient_filter, notes } = req.body || {};
+    const donorSites = String(donor_filter || '').split(',').map((s) => s.trim()).filter(Boolean);
+    const recipientSites = String(recipient_filter || '').split(',').map((s) => s.trim()).filter(Boolean);
+
+    // Donor genotypes: pull fragments whose outplants are at the donor sites (or all)
+    let donorPool;
+    if (donorSites.length > 0) {
+      const r = await pool.query(
+        `SELECT DISTINCT f.* FROM fragments f
+         LEFT JOIN outplants o ON o.frag_id = f.frag_id
+         WHERE o.site_id = ANY($1)
+         ORDER BY f.id ASC LIMIT 40`,
+        [donorSites]
+      );
+      donorPool = r.rows;
+    } else {
+      donorPool = (await pool.query('SELECT * FROM fragments ORDER BY id ASC LIMIT 40')).rows;
+    }
+
+    let recipients;
+    if (recipientSites.length > 0) {
+      const r = await pool.query('SELECT * FROM reef_sites WHERE site_id = ANY($1) ORDER BY id ASC', [recipientSites]);
+      recipients = r.rows;
+    } else {
+      recipients = (await pool.query('SELECT * FROM reef_sites ORDER BY id ASC LIMIT 30')).rows;
+    }
+
+    const result = await ai.genotypeRescueMatch(donorPool, recipients, { notes: notes || '' });
+    await record('genotype-rescue-match', { donor_filter, recipient_filter, notes }, result);
     res.json(result);
   } catch (e) { res.status(500).json({ error: e.message }); }
 });

@@ -414,6 +414,76 @@ async function donorNarrative(programMetrics = {}, tone = 'inspiring') {
   return safeJsonParse(r, { summary: typeof r === 'string' ? r : 'No response' });
 }
 
+// ============================================================
+// Apply pass 7 — additional AI verbs (3)
+// ============================================================
+
+// 17. species-mix-recommend
+async function speciesMixRecommend(siteContext = {}, genotypePool = [], constraints = {}) {
+  const sys = `${SYSTEM_PROMPT} Recommend an outplant species / genotype mix optimized for site conditions, thermal resilience, and ecological function. Return strict JSON:
+{
+  "site_id": string,
+  "recommended_mix": [{
+    "species": string,
+    "genotype_id": string,
+    "share_pct": number,
+    "expected_thermal_tolerance_c": number,
+    "ecological_role": string,
+    "rationale": string
+  }],
+  "diversity_index": number,
+  "risk_notes": [string],
+  "summary": string
+}`;
+  const usr = `Site:\n${JSON.stringify(siteContext, null, 2)}\n\nGenotype pool:\n${JSON.stringify(genotypePool, null, 2)}\n\nConstraints:\n${JSON.stringify(constraints, null, 2)}`;
+  const r = await callOpenRouter(sys, usr);
+  return safeJsonParse(r, { recommended_mix: [], summary: typeof r === 'string' ? r : 'No response' });
+}
+
+// 18. growth-rate-model
+async function growthRateModel(fragmentSeries = [], horizonMonths = 12) {
+  const sys = `${SYSTEM_PROMPT} From a fragment time-series, project monthly growth and projected sizes. Return strict JSON:
+{
+  "frag_id": string,
+  "species": string,
+  "history_points": number,
+  "horizon_months": number,
+  "monthly_projection": [{ "month_index": number, "projected_size_cm": number, "expected_health_score": number }],
+  "growth_rate_cm_per_month": number,
+  "confidence": "low"|"medium"|"high",
+  "limiting_factors": [string],
+  "summary": string
+}`;
+  const usr = `Fragment series:\n${JSON.stringify(fragmentSeries, null, 2)}\n\nHorizon months: ${horizonMonths}`;
+  const r = await callOpenRouter(sys, usr);
+  return safeJsonParse(r, { monthly_projection: [], summary: typeof r === 'string' ? r : 'No response' });
+}
+
+// 19. genotype-rescue-match
+async function genotypeRescueMatch(donorPool = [], recipientSites = [], constraints = {}) {
+  const sys = `${SYSTEM_PROMPT} Match donor genotypes to recipient sites based on thermal-tolerance traits, disease history, and connectivity. Return strict JSON:
+{
+  "matches": [{
+    "donor_genotype_id": string,
+    "donor_species": string,
+    "recipient_site_id": string,
+    "match_score": number,
+    "trait_alignment": {
+      "thermal_tolerance_match": "low"|"medium"|"high",
+      "disease_resistance_match": "low"|"medium"|"high",
+      "growth_match": "low"|"medium"|"high"
+    },
+    "recommended_fragments": number,
+    "rationale": string
+  }],
+  "warnings": [string],
+  "summary": string
+}`;
+  const usr = `Donor pool:\n${JSON.stringify(donorPool, null, 2)}\n\nRecipient sites:\n${JSON.stringify(recipientSites, null, 2)}\n\nConstraints:\n${JSON.stringify(constraints, null, 2)}`;
+  const r = await callOpenRouter(sys, usr);
+  return safeJsonParse(r, { matches: [], summary: typeof r === 'string' ? r : 'No response' });
+}
+
 module.exports = {
   callOpenRouter,
   safeJsonParse,
@@ -433,4 +503,7 @@ module.exports = {
   publicationSummary,
   trainingGapAnalysis,
   donorNarrative,
+  speciesMixRecommend,
+  growthRateModel,
+  genotypeRescueMatch,
 };

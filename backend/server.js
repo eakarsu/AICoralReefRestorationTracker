@@ -52,6 +52,10 @@ app.get('/api/health', (req, res) => {
 // Auth (public)
 app.use('/api/auth', require('./routes/auth'));
 
+// Apply pass 7 — public citizen-science submission endpoint (no auth required).
+// Must be mounted BEFORE authenticateToken so the public can submit observations.
+app.use('/api/public/citizen-submissions', require('./routes/citizenPublic'));
+
 // Everything below requires a Bearer token.
 app.use('/api', authenticateToken);
 
@@ -109,6 +113,13 @@ app.use('/api/dashboard', require('./routes/dashboard'));
 
 // Custom Views (Reef Analytics)
 app.use('/api/custom-views', require('./routes/customViews'));
+app.use('/api/reef-heat-stress-plan', require('./routes/reefHeatStressPlan'));
+
+// Apply pass 7 — full backlog mounts (BEFORE the listen / 404 fall-through).
+app.use('/api/dive-logs',            require('./routes/diveLogs'));
+app.use('/api/citizen-submissions',  require('./routes/citizenSubmissions'));
+app.use('/api/fragment-lineage',     require('./routes/fragmentLineage'));
+app.use('/api/noaa-crw',             require('./routes/noaaIngest'));
 
 app.listen(PORT, () => {
   console.log(`\nAI Coral Reef Restoration Tracker API running on http://localhost:${PORT}\n`);

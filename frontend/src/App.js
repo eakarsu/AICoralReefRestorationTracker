@@ -48,10 +48,24 @@ import WebhooksPage from './pages/WebhooksPage';
 // Custom Views (Reef Analytics)
 import CustomViewsPage from './pages/CustomViewsPage';
 
+// Apply pass 7 — new pages
+import AISpeciesMixRecommendPage  from './pages/AISpeciesMixRecommendPage';
+import AIGrowthRateModelPage      from './pages/AIGrowthRateModelPage';
+import AIGenotypeRescueMatchPage  from './pages/AIGenotypeRescueMatchPage';
+import DiveLogsPage               from './pages/DiveLogsPage';
+import CitizenSubmissionsPage     from './pages/CitizenSubmissionsPage';
+import CitizenPortalPage          from './pages/CitizenPortalPage';
+import FragmentLineagePage        from './pages/FragmentLineagePage';
+import NoaaCrwPage                from './pages/NoaaCrwPage';
+import AIReefHeatStressPlanPage   from './pages/AIReefHeatStressPlanPage';
+
 import LoginPage from './pages/LoginPage';
 import { getToken } from './services/api';
 
 import './App.css';
+
+import CodexCustomVizFeature from './pages/CodexCustomVizFeature';
+import CodexOperationsFeature from './pages/CodexOperationsFeature';
 
 function RequireAuth({ children }) {
   const location = useLocation();
@@ -69,6 +83,9 @@ function ShellRoutes() {
         <Topbar />
         <div style={{ padding: '24px 32px' }}>
           <Routes>
+        <Route path="/codex/custom-viz" element={<CodexCustomVizFeature />} />
+        <Route path="/codex/operations" element={<CodexOperationsFeature />} />
+
             <Route path="/" element={<Dashboard />} />
 
             <Route path="/reef-sites"         element={<ReefSitesPage />} />
@@ -106,10 +123,21 @@ function ShellRoutes() {
             <Route path="/ai/publication-summary"      element={<AIPublicationSummaryPage />} />
             <Route path="/ai/training-gap-analysis"    element={<AITrainingGapPage />} />
             <Route path="/ai/donor-narrative"          element={<AIDonorNarrativePage />} />
+            <Route path="/ai/reef-heat-stress-plan"    element={<AIReefHeatStressPlanPage />} />
 
             <Route path="/webhooks" element={<WebhooksPage />} />
 
             <Route path="/custom-views" element={<CustomViewsPage />} />
+
+            {/* Apply pass 7 — new feature routes */}
+            <Route path="/ai/species-mix-recommend"  element={<AISpeciesMixRecommendPage />} />
+            <Route path="/ai/growth-rate-model"      element={<AIGrowthRateModelPage />} />
+            <Route path="/ai/genotype-rescue-match"  element={<AIGenotypeRescueMatchPage />} />
+            <Route path="/dive-logs"                 element={<DiveLogsPage />} />
+            <Route path="/citizen-submissions"       element={<CitizenSubmissionsPage />} />
+            <Route path="/citizen-portal"            element={<CitizenPortalPage />} />
+            <Route path="/fragment-lineage"          element={<FragmentLineagePage />} />
+            <Route path="/noaa-crw"                  element={<NoaaCrwPage />} />
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
