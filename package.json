@@ -7,7 +7,11 @@
     "start": "bash start.sh",
     "backend": "cd backend && npm start",
     "frontend": "cd frontend && npm start",
-    "seed": "cd backend && node seed/seed.js",
+    "migrate": "cd backend && npm run migrate",
+    "create-user": "cd backend && npm run create-user",
+    "create-admin": "cd backend && npm run create-admin",
+    "seed:demo": "cd backend && npm run seed:demo",
+    "test": "cd backend && npm test",
     "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install"
   }
 }

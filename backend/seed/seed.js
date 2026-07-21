@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+if (process.env.ALLOW_DEMO_SEED !== 'true') throw new Error('Destructive demo seed disabled; use only with explicit ALLOW_DEMO_SEED=true on disposable data.');
 const { Pool } = require('pg');
 require('dotenv').config({ path: path.join(__dirname, '..', '..', '.env') });
 
@@ -8,7 +9,7 @@ const pool = new Pool({
   port: process.env.DB_PORT || 5432,
   database: process.env.DB_NAME || 'coral_restoration',
   user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || 'postgres',
+  password: process.env.DB_PASSWORD,
 });
 
 async function run() {
@@ -53,6 +54,12 @@ async function run() {
     } catch (e) {
       console.warn('[seed] 002_pass7_full_backlog migration warning:', e.message);
     }
+    // The destructive demo reset drops `users` while the migration ledger is
+    // intentionally retained. Reapply every additive user/auth column that
+    // the reset removed so the later gated create-admin command can provision
+    // a tenant-scoped scrypt credential.
+    const governedFieldwork = fs.readFileSync(path.join(__dirname, '..', 'migrations', '003_governed_fieldwork.sql'), 'utf8');
+    await client.query(governedFieldwork);
 
     console.log('[seed] inserting reef_sites...');
     const sites = [
