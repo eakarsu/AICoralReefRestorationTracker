@@ -14,17 +14,14 @@ async function main() {
   if (!email || !tenantId || !name) {
     throw new Error('PROVISION_ADMIN_EMAIL, PROVISION_ADMIN_PASSWORD, PROVISION_ADMIN_NAME and TENANT_ID are required');
   }
-  const existing = await pool.query('SELECT id FROM users WHERE LOWER(email) = LOWER($1) LIMIT 1', [email]);
-  if (existing.rows[0]) {
-    console.log('Administrator already exists; credentials and role were not changed');
-    return;
-  }
   await pool.query(
     `INSERT INTO users(email, name, password_hash, role, tenant_id, password)
-     VALUES($1, $2, $3, 'admin', $4, NULL)`,
+     VALUES($1, $2, $3, 'admin', $4, NULL)
+     ON CONFLICT(email) DO UPDATE SET name=EXCLUDED.name,password_hash=EXCLUDED.password_hash,
+       role=EXCLUDED.role,tenant_id=EXCLUDED.tenant_id,password=NULL`,
     [email, name, hashPassword(password), tenantId]
   );
-  console.log('Administrator provisioned');
+  console.log('Administrator provisioned or refreshed');
 }
 
 main().catch((error) => {
