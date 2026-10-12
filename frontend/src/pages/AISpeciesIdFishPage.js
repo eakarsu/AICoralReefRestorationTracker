@@ -12,7 +12,7 @@ export default function AISpeciesIdFishPage() {
         { key: 'description', label: 'Observation',  type: 'textarea', placeholder: 'Size, color, behavior, depth, habitat...' },
         { key: 'site_id',     label: 'Site ID (optional)' },
       ]}
-      run={(v) => aiSpeciesIdFish({ description: v.description, site_id: v.site_id })}
+      run={(v, requestOptions) => aiSpeciesIdFish({ description: v.description, site_id: v.site_id }, requestOptions)}
     />
   );
 }

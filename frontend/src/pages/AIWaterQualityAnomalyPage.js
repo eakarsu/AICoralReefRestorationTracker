@@ -12,7 +12,7 @@ export default function AIWaterQualityAnomalyPage() {
         { key: 'window_days', label: 'Window (days)', type: 'number' },
         { key: 'site_filter', label: 'Site Filter (comma-separated, blank = all)' },
       ]}
-      run={(v) => aiWaterQualityAnomaly({ window_days: Number(v.window_days || 30), site_filter: v.site_filter })}
+      run={(v, requestOptions) => aiWaterQualityAnomaly({ window_days: Number(v.window_days || 30), site_filter: v.site_filter }, requestOptions)}
     />
   );
 }

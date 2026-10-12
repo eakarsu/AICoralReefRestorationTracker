@@ -12,7 +12,7 @@ export default function AIBleachingForecastPage() {
         { key: 'site_id',   label: 'Site ID', placeholder: 'e.g. SITE-001 (leave blank for program-wide)' },
         { key: 'sst_notes', label: 'SST / Thermal Stress Notes', type: 'textarea', placeholder: 'Free-form SST anomalies, NOAA DHW, ENSO state, etc.' },
       ]}
-      run={(v) => aiBleachingForecast({ site_id: v.site_id, sst_notes: v.sst_notes })}
+      run={(v, requestOptions) => aiBleachingForecast({ site_id: v.site_id, sst_notes: v.sst_notes }, requestOptions)}
     />
   );
 }

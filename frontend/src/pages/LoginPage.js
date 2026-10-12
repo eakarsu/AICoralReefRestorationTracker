@@ -1,20 +1,26 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login, setToken, setStoredUser } from '../services/api';
 
+const DEMO_EMAIL = process.env.REACT_APP_DEMO_EMAIL || 'admin@coralreef.io';
+const DEMO_PASSWORD = process.env.REACT_APP_DEMO_PASSWORD || 'admin123';
+
 export default function LoginPage() {
+  const demoLoginLock = useRef(false);
+  const [demoLoginBusy, setDemoLoginBusy] = useState(false);
+
   const navigate = useNavigate();
-  const [email, setEmail] = useState('admin@coralreef.io');
-  const [password, setPassword] = useState('admin123');
+  const [email, setEmail] = useState(DEMO_EMAIL);
+  const [password, setPassword] = useState(DEMO_PASSWORD);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e, demoLoginCredentials) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
     try {
-      const { token, user } = await login(email, password);
+      const { token, user } = await login((demoLoginCredentials?.email ?? email), (demoLoginCredentials?.password ?? password));
       setToken(token);
       setStoredUser(user);
       navigate('/', { replace: true });
@@ -22,6 +28,20 @@ export default function LoginPage() {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDemoLogin = async (event) => {
+    if (demoLoginLock.current) return;
+    demoLoginLock.current = true;
+    setDemoLoginBusy(true);
+    setEmail(DEMO_EMAIL);
+    setPassword(DEMO_PASSWORD);
+    try {
+      await handleSubmit(event, { email: DEMO_EMAIL, password: DEMO_PASSWORD });
+    } finally {
+      demoLoginLock.current = false;
+      setDemoLoginBusy(false);
     }
   };
 
@@ -56,12 +76,12 @@ export default function LoginPage() {
 
         <button
           type="button"
-          onClick={() => { setEmail(process.env.REACT_APP_DEMO_EMAIL || ''); setPassword(process.env.REACT_APP_DEMO_PASSWORD || ''); }}
-          disabled={!process.env.REACT_APP_DEMO_EMAIL || !process.env.REACT_APP_DEMO_PASSWORD}
-          aria-label="Auto Fill Demo Credentials"
+          onClick={handleDemoLogin}
+          disabled={loading || demoLoginBusy}
+          aria-label="Log in as Demo"
           style={{ width: '100%', marginBottom: '12px', padding: '10px 14px', borderRadius: '8px', border: '1px solid currentColor', background: 'transparent', cursor: 'pointer' }}
         >
-          Auto Fill Demo Credentials
+          {demoLoginBusy ? 'Logging in…' : 'Log in as Demo'}
         </button>
         <button className="btn" type="submit" disabled={loading} style={{ width: '100%' }}>
           {loading ? <><span className="spinner" />Authenticating...</> : 'Sign In'}

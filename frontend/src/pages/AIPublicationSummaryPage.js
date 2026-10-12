@@ -12,7 +12,7 @@ export default function AIPublicationSummaryPage() {
         { key: 'pub_id',   label: 'Publication ID',  placeholder: 'e.g. PUB-2026-001' },
         { key: 'audience', label: 'Audience',        type: 'select', options: ['donor','media','policy','internal','scientific'] },
       ]}
-      run={(v) => aiPublicationSummary({ pub_id: v.pub_id, audience: v.audience })}
+      run={(v, requestOptions) => aiPublicationSummary({ pub_id: v.pub_id, audience: v.audience }, requestOptions)}
     />
   );
 }

@@ -104,11 +104,11 @@ const SAMPLES = {
     { label: 'Mafia Island monsoon',             values: { site_id: 'SITE-013', forecast_notes: 'Monsoon runoff; turbidity > 5 NTU; choppy.' } },
   ],
   'species-id-fish': [
-    { label: 'Vibrant blue tang school',         values: { description: 'School of ~60 vibrant blue tangs grazing on turf algae at 8m, Looe Key.' } },
-    { label: 'Solitary grouper in cave',         values: { description: 'Single olive-brown grouper, ~70cm, in coral cave at 14m, Bonaire Salt Pier.' } },
-    { label: 'Mass schooling fusiliers',         values: { description: 'Yellow-tail schooling fish, dense column ~200 individuals, Apo Reef wall.' } },
-    { label: 'Damsel guarding nest',             values: { description: 'Black aggressive damsel ~10cm guarding patch of turf, Glover\'s Atoll.' } },
-    { label: 'Cleaner wrasse station',           values: { description: 'Small blue / black striped wrasse at cleaning station with grouper client, Heron Island.' } },
+    { label: 'Vibrant blue tang school',         values: { site_id: 'SITE-001', description: 'School of ~60 vibrant blue tangs grazing on turf algae at 8m, Looe Key.' } },
+    { label: 'Solitary grouper in cave',         values: { site_id: 'SITE-007', description: 'Single olive-brown grouper, ~70cm, in coral cave at 14m, Bonaire Salt Pier.' } },
+    { label: 'Mass schooling fusiliers',         values: { site_id: 'SITE-014', description: 'Yellow-tail schooling fish, dense column ~200 individuals, Apo Reef wall.' } },
+    { label: 'Damsel guarding nest',             values: { site_id: 'SITE-004', description: 'Black aggressive damsel ~10cm guarding patch of turf, Glover\'s Atoll.' } },
+    { label: 'Cleaner wrasse station',           values: { site_id: 'SITE-009', description: 'Small blue / black striped wrasse at cleaning station with grouper client, Heron Island.' } },
   ],
   'publication-summary': [
     { label: 'PUB-2026-001 (Florida outplants)',  values: { pub_id: 'PUB-2026-001', audience: 'donor' } },

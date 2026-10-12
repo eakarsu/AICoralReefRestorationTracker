@@ -11,7 +11,7 @@ export default function AIFragmentHealthPage() {
       inputs={[
         { key: 'notes', label: 'Observations / Photo Notes', type: 'textarea', placeholder: 'What did the diver/camera see? Color, lesions, predation...' },
       ]}
-      run={(v) => aiFragmentHealth({ notes: v.notes })}
+      run={(v, requestOptions) => aiFragmentHealth({ notes: v.notes }, requestOptions)}
     />
   );
 }

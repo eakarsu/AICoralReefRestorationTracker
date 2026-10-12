@@ -12,7 +12,7 @@ export default function AIDonorNarrativePage() {
         { key: 'tone',     label: 'Tone',     type: 'select', options: ['inspiring','urgent','reflective','confident','heartfelt'] },
         { key: 'audience', label: 'Audience', placeholder: 'e.g. donors, corporate, community' },
       ]}
-      run={(v) => aiDonorNarrative({ tone: v.tone, audience: v.audience })}
+      run={(v, requestOptions) => aiDonorNarrative({ tone: v.tone, audience: v.audience }, requestOptions)}
     />
   );
 }

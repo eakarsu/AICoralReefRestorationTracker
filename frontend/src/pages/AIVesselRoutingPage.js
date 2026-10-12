@@ -13,7 +13,7 @@ export default function AIVesselRoutingPage() {
         { key: 'sites',   label: 'Sites',   placeholder: 'comma-separated SITE-IDs' },
         { key: 'vessels', label: 'Vessels', placeholder: 'comma-separated VES-IDs' },
       ]}
-      run={(v) => aiVesselRouting({ day: v.day, sites: v.sites, vessels: v.vessels })}
+      run={(v, requestOptions) => aiVesselRouting({ day: v.day, sites: v.sites, vessels: v.vessels }, requestOptions)}
     />
   );
 }

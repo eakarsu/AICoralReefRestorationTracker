@@ -12,7 +12,7 @@ export default function AISurvivalPredictPage() {
         { key: 'site_filter', label: 'Site Filter (comma-separated, blank = all)', placeholder: 'e.g. SITE-001,SITE-002' },
         { key: 'notes',       label: 'Additional Notes', type: 'textarea' },
       ]}
-      run={(v) => aiSurvivalPredict({ site_filter: v.site_filter, notes: v.notes })}
+      run={(v, requestOptions) => aiSurvivalPredict({ site_filter: v.site_filter, notes: v.notes }, requestOptions)}
     />
   );
 }

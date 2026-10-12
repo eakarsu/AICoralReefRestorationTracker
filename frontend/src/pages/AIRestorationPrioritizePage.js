@@ -13,11 +13,11 @@ export default function AIRestorationPrioritizePage() {
         { key: 'budget_usd',          label: 'Budget (USD)',         type: 'number' },
         { key: 'capacity_diver_days', label: 'Capacity (diver-days)', type: 'number' },
       ]}
-      run={(v) => aiRestorationPrior({
+      run={(v, requestOptions) => aiRestorationPrior({
         region: v.region,
         budget_usd: Number(v.budget_usd || 0),
         capacity_diver_days: Number(v.capacity_diver_days || 0),
-      })}
+      }, requestOptions)}
     />
   );
 }

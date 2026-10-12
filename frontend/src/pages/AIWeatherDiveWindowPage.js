@@ -12,7 +12,7 @@ export default function AIWeatherDiveWindowPage() {
         { key: 'site_id',        label: 'Site ID' },
         { key: 'forecast_notes', label: 'Forecast Notes', type: 'textarea', placeholder: 'Wind, swell, viz, fronts, monsoon...' },
       ]}
-      run={(v) => aiWeatherDiveWindow({ site_id: v.site_id, forecast_notes: v.forecast_notes })}
+      run={(v, requestOptions) => aiWeatherDiveWindow({ site_id: v.site_id, forecast_notes: v.forecast_notes }, requestOptions)}
     />
   );
 }

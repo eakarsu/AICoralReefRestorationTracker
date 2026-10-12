@@ -13,11 +13,11 @@ export default function AIGrowthRateModelPage() {
         { key: 'horizon_months',  label: 'Horizon (months)',     type: 'number', defaultValue: 12 },
         { key: 'notes',           label: 'Notes',                type: 'textarea' },
       ]}
-      run={(v) => aiGrowthRateModel({
+      run={(v, requestOptions) => aiGrowthRateModel({
         frag_id: v.frag_id,
         horizon_months: v.horizon_months,
         notes: v.notes,
-      })}
+      }, requestOptions)}
     />
   );
 }

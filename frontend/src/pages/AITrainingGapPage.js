@@ -12,7 +12,7 @@ export default function AITrainingGapPage() {
         { key: 'window_months', label: 'Window (months)', type: 'number' },
         { key: 'role_filter',   label: 'Role Filter',     placeholder: 'e.g. field, volunteer, new_hire, senior' },
       ]}
-      run={(v) => aiTrainingGap({ window_months: Number(v.window_months || 12), role_filter: v.role_filter })}
+      run={(v, requestOptions) => aiTrainingGap({ window_months: Number(v.window_months || 12), role_filter: v.role_filter }, requestOptions)}
     />
   );
 }

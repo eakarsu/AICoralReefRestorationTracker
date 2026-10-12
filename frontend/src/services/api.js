@@ -134,7 +134,7 @@ export const getGenotypeCohort  = (genotypeId) => request(`/fragment-lineage/gen
 export const getNoaaCrwStatus  = () => request('/noaa-crw/status');
 export const getNoaaCrwIngests = () => request('/noaa-crw/ingests');
 export const triggerNoaaCrw    = (body) => request('/noaa-crw/trigger', { method: 'POST', body: JSON.stringify(body || {}) });
-export const reefHeatStressPlan = (body) => request('/reef-heat-stress-plan/score', { method: 'POST', body: JSON.stringify(body || {}) });
+export const reefHeatStressPlan = (body, options = {}) => request('/reef-heat-stress-plan/score', { ...options, method: 'POST', body: JSON.stringify(body || {}) });
 
 // 18 CRUD entities
 export const reefSitesApi         = crud('reef-sites');
@@ -165,27 +165,27 @@ export const login = (email, password) =>
 export const getMe = () => request('/auth/me');
 
 // AI verbs (16)
-export const aiBleachingForecast    = (b) => request('/ai/bleaching-event-forecast',  { method: 'POST', body: JSON.stringify(b || {}) });
-export const aiFragmentHealth       = (b) => request('/ai/fragment-health-vision',    { method: 'POST', body: JSON.stringify(b || {}) });
-export const aiSurvivalPredict      = (b) => request('/ai/survival-predict',          { method: 'POST', body: JSON.stringify(b || {}) });
-export const aiRestorationPrior     = (b) => request('/ai/restoration-prioritize',    { method: 'POST', body: JSON.stringify(b || {}) });
-export const aiExecutiveBrief       = (b) => request('/ai/executive-brief',           { method: 'POST', body: JSON.stringify(b || {}) });
-export const aiWaterQualityAnomaly  = (b) => request('/ai/water-quality-anomaly',     { method: 'POST', body: JSON.stringify(b || {}) });
-export const aiDiverSafetyBrief     = (b) => request('/ai/diver-safety-brief',        { method: 'POST', body: JSON.stringify(b || {}) });
-export const aiPartnerImpact        = (b) => request('/ai/partner-impact-report',     { method: 'POST', body: JSON.stringify(b || {}) });
-export const aiGrantDraft           = (b) => request('/ai/grant-application-draft',   { method: 'POST', body: JSON.stringify(b || {}) });
-export const aiPropagationSuccess   = (b) => request('/ai/propagation-success-rate',  { method: 'POST', body: JSON.stringify(b || {}) });
-export const aiVesselRouting        = (b) => request('/ai/vessel-routing',            { method: 'POST', body: JSON.stringify(b || {}) });
-export const aiWeatherDiveWindow    = (b) => request('/ai/weather-dive-window',       { method: 'POST', body: JSON.stringify(b || {}) });
-export const aiSpeciesIdFish        = (b) => request('/ai/species-id-fish',           { method: 'POST', body: JSON.stringify(b || {}) });
-export const aiPublicationSummary   = (b) => request('/ai/publication-summary',       { method: 'POST', body: JSON.stringify(b || {}) });
-export const aiTrainingGap          = (b) => request('/ai/training-gap-analysis',     { method: 'POST', body: JSON.stringify(b || {}) });
-export const aiDonorNarrative       = (b) => request('/ai/donor-narrative',           { method: 'POST', body: JSON.stringify(b || {}) });
+export const aiBleachingForecast    = (b, options = {}) => request('/ai/bleaching-event-forecast',  { ...options, method: 'POST', body: JSON.stringify(b || {}) });
+export const aiFragmentHealth       = (b, options = {}) => request('/ai/fragment-health-vision',    { ...options, method: 'POST', body: JSON.stringify(b || {}) });
+export const aiSurvivalPredict      = (b, options = {}) => request('/ai/survival-predict',          { ...options, method: 'POST', body: JSON.stringify(b || {}) });
+export const aiRestorationPrior     = (b, options = {}) => request('/ai/restoration-prioritize',    { ...options, method: 'POST', body: JSON.stringify(b || {}) });
+export const aiExecutiveBrief       = (b, options = {}) => request('/ai/executive-brief',           { ...options, method: 'POST', body: JSON.stringify(b || {}) });
+export const aiWaterQualityAnomaly  = (b, options = {}) => request('/ai/water-quality-anomaly',     { ...options, method: 'POST', body: JSON.stringify(b || {}) });
+export const aiDiverSafetyBrief     = (b, options = {}) => request('/ai/diver-safety-brief',        { ...options, method: 'POST', body: JSON.stringify(b || {}) });
+export const aiPartnerImpact        = (b, options = {}) => request('/ai/partner-impact-report',     { ...options, method: 'POST', body: JSON.stringify(b || {}) });
+export const aiGrantDraft           = (b, options = {}) => request('/ai/grant-application-draft',   { ...options, method: 'POST', body: JSON.stringify(b || {}) });
+export const aiPropagationSuccess   = (b, options = {}) => request('/ai/propagation-success-rate',  { ...options, method: 'POST', body: JSON.stringify(b || {}) });
+export const aiVesselRouting        = (b, options = {}) => request('/ai/vessel-routing',            { ...options, method: 'POST', body: JSON.stringify(b || {}) });
+export const aiWeatherDiveWindow    = (b, options = {}) => request('/ai/weather-dive-window',       { ...options, method: 'POST', body: JSON.stringify(b || {}) });
+export const aiSpeciesIdFish        = (b, options = {}) => request('/ai/species-id-fish',           { ...options, method: 'POST', body: JSON.stringify(b || {}) });
+export const aiPublicationSummary   = (b, options = {}) => request('/ai/publication-summary',       { ...options, method: 'POST', body: JSON.stringify(b || {}) });
+export const aiTrainingGap          = (b, options = {}) => request('/ai/training-gap-analysis',     { ...options, method: 'POST', body: JSON.stringify(b || {}) });
+export const aiDonorNarrative       = (b, options = {}) => request('/ai/donor-narrative',           { ...options, method: 'POST', body: JSON.stringify(b || {}) });
 
 // Apply pass 7 — additional AI verbs
-export const aiSpeciesMixRecommend  = (b) => request('/ai/species-mix-recommend',     { method: 'POST', body: JSON.stringify(b || {}) });
-export const aiGrowthRateModel      = (b) => request('/ai/growth-rate-model',         { method: 'POST', body: JSON.stringify(b || {}) });
-export const aiGenotypeRescueMatch  = (b) => request('/ai/genotype-rescue-match',     { method: 'POST', body: JSON.stringify(b || {}) });
+export const aiSpeciesMixRecommend  = (b, options = {}) => request('/ai/species-mix-recommend',     { ...options, method: 'POST', body: JSON.stringify(b || {}) });
+export const aiGrowthRateModel      = (b, options = {}) => request('/ai/growth-rate-model',         { ...options, method: 'POST', body: JSON.stringify(b || {}) });
+export const aiGenotypeRescueMatch  = (b, options = {}) => request('/ai/genotype-rescue-match',     { ...options, method: 'POST', body: JSON.stringify(b || {}) });
 
 // AI history
 export const getAIHistory = (feature, limit = 25) => {

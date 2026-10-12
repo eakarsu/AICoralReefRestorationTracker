@@ -12,7 +12,7 @@ export default function AIPartnerImpactPage() {
         { key: 'partner_id', label: 'Partner ID', placeholder: 'e.g. PRT-001' },
         { key: 'period',     label: 'Period',     placeholder: 'e.g. FY26 Q3' },
       ]}
-      run={(v) => aiPartnerImpact({ partner_id: v.partner_id, period: v.period })}
+      run={(v, requestOptions) => aiPartnerImpact({ partner_id: v.partner_id, period: v.period }, requestOptions)}
     />
   );
 }

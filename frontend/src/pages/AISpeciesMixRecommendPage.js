@@ -14,12 +14,12 @@ export default function AISpeciesMixRecommendPage() {
         { key: 'max_species',      label: 'Max Species',      type: 'number', defaultValue: 4 },
         { key: 'notes',            label: 'Notes',            type: 'textarea' },
       ]}
-      run={(v) => aiSpeciesMixRecommend({
+      run={(v, requestOptions) => aiSpeciesMixRecommend({
         site_id: v.site_id,
         target_diversity: v.target_diversity,
         max_species: v.max_species,
         notes: v.notes,
-      })}
+      }, requestOptions)}
     />
   );
 }

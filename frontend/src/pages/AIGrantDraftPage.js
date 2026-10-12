@@ -14,12 +14,12 @@ export default function AIGrantDraftPage() {
         { key: 'period',     label: 'Period',         placeholder: 'e.g. 2026-2029' },
         { key: 'aims',       label: 'Specific Aims',  type: 'textarea' },
       ]}
-      run={(v) => aiGrantDraft({
+      run={(v, requestOptions) => aiGrantDraft({
         funder: v.funder,
         amount_usd: Number(v.amount_usd || 0),
         period: v.period,
         aims: v.aims,
-      })}
+      }, requestOptions)}
     />
   );
 }

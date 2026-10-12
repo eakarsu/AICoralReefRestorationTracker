@@ -15,13 +15,13 @@ export default function AIDiverSafetyBriefPage() {
         { key: 'divers',          label: 'Divers',           placeholder: 'comma-separated' },
         { key: 'conditions',      label: 'Conditions',       type: 'textarea' },
       ]}
-      run={(v) => aiDiverSafetyBrief({
+      run={(v, requestOptions) => aiDiverSafetyBrief({
         site_id: v.site_id,
         target_depth_m: Number(v.target_depth_m || 0),
         planned_minutes: Number(v.planned_minutes || 0),
         divers: v.divers,
         conditions: v.conditions,
-      })}
+      }, requestOptions)}
     />
   );
 }

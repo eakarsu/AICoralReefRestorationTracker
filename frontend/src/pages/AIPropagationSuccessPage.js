@@ -12,7 +12,7 @@ export default function AIPropagationSuccessPage() {
         { key: 'window',          label: 'Window',          placeholder: 'e.g. last_180_days' },
         { key: 'nursery_filter',  label: 'Nursery Filter',  placeholder: 'comma-separated NUR-IDs (blank = all)' },
       ]}
-      run={(v) => aiPropagationSuccess({ window: v.window, nursery_filter: v.nursery_filter })}
+      run={(v, requestOptions) => aiPropagationSuccess({ window: v.window, nursery_filter: v.nursery_filter }, requestOptions)}
     />
   );
 }
