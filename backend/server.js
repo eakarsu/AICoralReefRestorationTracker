@@ -59,6 +59,9 @@ if (process.env.ENABLE_PUBLIC_CITIZEN_SUBMISSIONS === 'true') app.use('/api/publ
 // Everything below requires a Bearer token.
 app.use('/api', authenticateToken);
 app.use('/api/governed-fieldwork', require('./routes/governedFieldwork'));
+const fp31cCoral = require('./routes/fp31c').createFeaturePack({ authenticate: authenticateToken, getRecords: async () => { try { const r = await pool.query('SELECT * FROM reef_sites ORDER BY id DESC LIMIT 50'); return r.rows; } catch { return []; } } });
+app.use('/api/tasks', fp31cCoral.tasksRouter);
+app.use('/api/fp31c', fp31cCoral.packRouter);
 if (process.env.ENABLE_LEGACY_GLOBAL_ROUTES !== 'true') {
   app.use('/api',(req,res)=>res.status(404).json({error:'legacy_routes_disabled',message:'Use /api/governed-fieldwork; legacy and provider routes require explicit review.'}));
 } else {

@@ -39,7 +39,13 @@ function buildCrud({ table, fields, idPrefix = '', webhookPrefix = null }) {
 
   router.get('/', async (req, res) => {
     try {
-      const r = await pool.query(`SELECT * FROM ${table} ORDER BY id DESC`);
+      const search = req.query.search || req.query.q || '';
+      const status = req.query.status || '';
+      const conds=[]; const params=[];
+      if (search) { params.push(`%${search}%`); conds.push(`to_jsonb(t)::text ILIKE $${params.length}`); }
+      if (status) { params.push(status); conds.push(`to_jsonb(t)->>'status' = $${params.length}`); }
+      const where = conds.length ? ` WHERE ${conds.join(' AND ')}` : '';
+      const r = await pool.query(`SELECT * FROM ${table} t${where} ORDER BY t.id DESC`, params);
       res.json(r.rows);
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
